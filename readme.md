@@ -1,4 +1,4 @@
-# unuse [![Build Status](https://travis-ci.org/dy/unuse.svg?branch=master)](https://travis-ci.org/dy/unuse)
+# unhook [![Build Status](https://travis-ci.org/dy/unhook.svg?branch=master)](https://travis-ci.org/dy/unhook)
 
 Reactless `useEffect` and `useState` hooks for any function.
 Impose less [hooks limitations](https://reactjs.org/docs/hooks-rules.html) than React: basically, hook must be sync (unless async callstack is available).
@@ -6,21 +6,27 @@ Impose less [hooks limitations](https://reactjs.org/docs/hooks-rules.html) than 
 [![NPM](https://nodei.co/npm/unhook.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/unhook/)
 
 ```js
-import { useEffect } from 'unhook'
+import { useEffect, useState } from 'unhook'
 
-getProp({a: { b: { c: 1}} }, 'a.b.c') // 1
-getProp([1,2,3], 2) // 3
-getProp({}, 'a.b') // undefined
+function foo () {
+  useEffect(() => {
+    // called once
+  }, [])
 
-// recognizes arrays too
-getProp({a: { b: { c: 1}} }, ['a', 'b', 'c']) // 1
-getProp({a: { 'b.c': 1 }}, ['a', 'b.c']) // 1
+  let [x, setX] = useState(1)
+}
 ```
 
-For production, use [babel-plugin-unhook](https://ghub.io/dy/unhook)
+Internally, _unhooks_ use [`error.stack`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack), which is non-standard, but well supported by all browsers for long time.
+For production, use [babel-plugin-unhook](https://ghub.io/dy/unhook).
 
 
 ### Similar art
 
 * [augmentor](https://www.npmjs.com/package/augmentor), [dom-augmentor](https://www.npmjs.com/package/dom-augmentor)
 * [preact hooks](https://preactjs.com/guide/v10/hooks/)
+* [idx](https://ghub.io/idx)
+
+##
+
+HK
