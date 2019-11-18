@@ -1,7 +1,7 @@
 {
   "name": "unhook",
   "version": "1.0.0",
-  "description": "Unleashed hooks from react components",
+  "description": "Unbind hooks from react",
   "main": "index.js",
   "scripts": {
     "start": "parcel serve --no-hmr test.html",
