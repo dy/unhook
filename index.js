@@ -1,20 +1,34 @@
-/**
- * @module dotprop
- *
- * Get property defined by dot notation in string.
- *
- * @param  {Object} holder   Target object where to look property up
- * @param  {string} propName Dot notation, like 'this.a.b.c'
- * @return {*}          A property value
- */
-module.exports = function(holder, propName){
-	if (propName == null || !holder) return holder;
-	var propParts = Array.isArray(propName) ? propName : (propName + '').split('.');
-	var result = holder, lastPropName;
+import enhook, {
+	useState as useNativeState,
+	useEffect as useNativeEffect,
+	useMemo as useNativeMemo,
+	useReducer as useNativeReducer,
+	useCallback as useNativeCallback,
+	useContext as useNativeContext,
+	useRef as useNativeRef,
+	useLayoutEffect as useNativeLayoutEffect
+} from 'enhook'
+import { parse } from 'stacktrace-parser'
 
-	while ((lastPropName = propParts.shift()) != null) {
-		if (!result[lastPropName]) return !propParts.length ? result[lastPropName] : undefined;
-		result = result[lastPropName];
+
+const cache = {}
+
+export default function unhook (hook) {
+	return (...args) => {
+		let [unhookSite, fnSite, callSite, ...stack] = parse(new Error().stack)
+		let stackId = `${fnSite.file}:${fnSite.lineNumber}:${fnSite.column}`
+
+		const fn = cache[stackId] || (cache[stackId] = enhook((...args) => hook(...args)))
+
+		return fn(...args)
 	}
-	return result;
-};
+}
+
+export const useState = unhook(useNativeState)
+export const useEffect = unhook(useNativeEffect)
+export const useCallback = unhook(useNativeCallback)
+export const useMemo = unhook(useNativeMemo)
+export const useReducer = unhook(useNativeReducer)
+export const useLayoutEffect = unhook(useNativeLayoutEffect)
+export const useContext = unhook(useNativeContext)
+export const useRef = unhook(useNativeRef)

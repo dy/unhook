@@ -1,72 +1,61 @@
-var assert = require('assert');
-var getProp = require('./');
+import t from 'tape'
+import { useState, useEffect } from '.'
 
-assert.equal(getProp({a: { b: { c: 1}} }, 'a.b.c'), 1);
-assert.equal(getProp([1,2,3], 2), 3);
-assert.equal(getProp({}, 'a.b'), undefined);
+t.only('useState', t => {
+	let log = []
+	function a() {
+		let [value, setValue] = useState(1)
+		log.push('a', value)
+		setValue(value + 1)
+	}
+	function b() {
+		let [value, setValue] = useState(100)
+		log.push('b', value)
+		setValue(value - 1)
+	}
 
-var f0 = {foo: 1};
-assert(getProp(f0) === f0);
-assert(getProp({foo: 1}, 'foo') === 1);
-assert(getProp({foo: null}, 'foo') === null);
-assert(getProp({foo: undefined}, 'foo') === undefined);
-assert(getProp({foo: {bar: true}}, 'foo.bar') === true);
-assert(getProp({foo: {bar: {baz: true}}}, 'foo.bar.baz') === true);
-assert(getProp({foo: {bar: {baz: null}}}, 'foo.bar.baz') === null);
-assert(getProp({foo: {bar: null}}, 'foo.bar.baz') === undefined);
-assert(getProp({foo: {bar: 'a'}}, 'foo.fake.fake2') === undefined);
+	a()
+	t.deepEqual(log, ['a', 1])
 
+	b()
+	t.deepEqual(log, ['a', 1, 'b', 100])
 
-assert(getProp({a: { 'b.c': 1 }}, ['a', 'b.c']) === 1)
-assert(getProp({a: { b: { c: 1}} }, ['a', 'b', 'c']) === 1)
+	a()
+	t.deepEqual(log, ['a', 1, 'b', 100, 'a', 2])
 
-// dot-prop tests
-const f1 = {foo: {bar: 1}};
-assert(getProp(f1) === f1);
-f1[''] = 'foo';
-assert(getProp(f1, '') === 'foo');
-assert(getProp(f1, 'foo') === f1.foo);
-assert(getProp({foo: 1}, 'foo') === 1);
-assert(getProp({foo: null}, 'foo') === null);
-assert(getProp({foo: undefined}, 'foo') === undefined);
-assert(getProp({foo: {bar: true}}, 'foo.bar') === true);
-assert(getProp({foo: {bar: {baz: true}}}, 'foo.bar.baz') === true);
-assert(getProp({foo: {bar: {baz: null}}}, 'foo.bar.baz') === null);
-assert(getProp({foo: {bar: 'a'}}, 'foo.fake') === undefined);
-assert(getProp({foo: {bar: 'a'}}, 'foo.fake.fake2') === undefined);
-assert(getProp({foo: {bar: 'a'}}, 'foo.fake.fake2') || 'some value' === 'some value');
-assert(getProp({'\\': true}, '\\') === true);
-assert(getProp({'\\foo': true}, '\\foo') === true);
-assert(getProp({'bar\\': true}, 'bar\\') === true);
-assert(getProp({'foo\\bar': true}, 'foo\\bar') === true);
-assert(getProp({'\\.foo': true}, ['\\.foo']) === true);
-assert(getProp({'bar\\.': true}, ['bar\\.']) === true);
-assert(getProp({'foo\\.bar': true}, ['foo\\.bar']) === true);
-assert(getProp({foo: 1}, 'foo.bar') === undefined);
+	b()
+	t.deepEqual(log, ['a', 1, 'b', 100, 'a', 2, 'b', 99])
 
-const f2 = {};
-Object.defineProperty(f2, 'foo', {
-	value: 'bar',
-	enumerable: false
-});
-assert(getProp(f2, 'foo') === 'bar');
-// assert(getProp({}, 'hasOwnProperty') === undefined);
+	function step(x, y) {
+		x()
+		y()
+	}
+	step(a, b)
+	t.deepEqual(log, ['a', 1, 'b', 100, 'a', 2, 'b', 99, 'a', 3, 'b', 98])
 
-function fn() {}
-fn.foo = {bar: 1};
-assert(getProp(fn) === fn);
-assert(getProp(fn, 'foo') === fn.foo);
-assert(getProp(fn, 'foo.bar') === 1);
+	setTimeout(() => {
+		a()
+		b()
+		t.deepEqual(log, ['a', 1, 'b', 100, 'a', 2, 'b', 99, 'a', 3, 'b', 98, 'a', 4, 'b', 97])
 
-const f3 = {foo: null};
+		t.end()
+	})
+})
 
-assert(getProp(f3, 'foo.bar') === undefined);
-assert(getProp(f3, 'foo.bar') || 'some value' === 'some value');
+t.skip('useEffect', t => {
+	function tick() {
+		let [count, setCount] = useState(0)
+		console.log(count)
+		useEffect(() => {
+			let id = setInterval(() => {
+				setCount(count => count + 1)
 
-assert(getProp({'foo.baz': {bar: true}}, ['foo.baz', 'bar']) === true);
-assert(getProp({'fo.ob.az': {bar: true}}, ['fo.ob.az', 'bar']) === true);
+				// NOTE: function must be triggered manually
+				tick()
+			}, 1000)
+			return () => clearInterval(id)
+		}, [])
+	}
 
-assert(getProp(null, 'foo.bar') ||  false === false);
-assert(getProp('foo', 'foo.bar') || false === false);
-assert(getProp([], 'foo.bar') || false === false);
-assert(getProp(undefined, 'foo.bar') || false === false);
+	tick()
+})
