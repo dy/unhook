@@ -1,4 +1,4 @@
-# unhook [![Build Status](https://travis-ci.org/dy/unhook.svg?branch=master)](https://travis-ci.org/dy/unhook)
+# unhook [![Build Status](https://travis-ci.org/unihooks/unhook.svg?branch=master)](https://travis-ci.org/unihooks/unhook) ![experimental](https://img.shields.io/badge/stability-experimental-yellow)
 
 Unleash react/preact hooks from components, make them available in regular javascript without [hooks limitations](https://reactjs.org/docs/hooks-rules.html).
 
@@ -25,7 +25,7 @@ function tick() {
 Internally, _unhook_ uses [`error.stack`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack), which is non-standard, but well supported by all browsers/engines for a long time.
 
 For production, it is possible to statically compile source to avoid using `error.stack`. (pending feature...)
-<!-- For production, use [babel-plugin-unhook](https://ghub.io/dy/unhook). -->
+<!-- For production, use [babel-plugin-unhook](https://ghub.io/unihooks/unhook). -->
 
 ## See also
 
