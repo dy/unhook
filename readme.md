@@ -2,7 +2,7 @@
 
 Unleash react/preact hooks from components, make them available in regular javascript without [hooks limitations](https://reactjs.org/docs/hooks-rules.html).
 
-[![NPM](https://nodei.co/npm/unhook.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/unhook/)
+[![NPM](https://nodei.co/npm/unhook.png?mini=true)](https://nodei.co/npm/unhook/)
 
 ```js
 import { useEffect, useState } from 'unhook'
