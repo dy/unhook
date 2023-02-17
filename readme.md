@@ -32,6 +32,5 @@ For production, it is possible to statically compile source to avoid using `erro
 * [enhook](https://ghub.io/enhook) - turn a function into hooks-enabled function.
 * [any-hooks](https://ghub.io/any-hooks) - obtain any installed hooks.
 * [unihooks](https://ghub.io/unihooks) - collection of universal hooks
-* [remorph](https://ghub.io/@dy/remorph) - react-based morphdom
 
 <p align="right">HK</p>
